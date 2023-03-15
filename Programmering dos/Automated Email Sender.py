@@ -14,6 +14,9 @@ password = input("Enter your password: ")
 
 smtp_mailInfo.login(email, password)
 
-recipent = input("Enter the recipents email: ")
+recipient = input("Enter the recipients email: ")
 subject = input("Enter the email subject: ")
 mainText = input("Enter the main text: ")
+
+message = f"Subject: {subject}\n\n{mainText}"
+smtp_mailInfo.sendmail(recipient, subject, mainText)
