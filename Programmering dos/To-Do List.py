@@ -1,6 +1,6 @@
 import os
 
-folderPath = "C:/Users/EliasAdestam/PycharmProjects/Programmering dos"
+folderPath = "C:/Users/EliasAdestam/PycharmProjects/Programmering dos" #User chooses file path
 files = os.listdir(folderPath)
 txtFiles = [f for f in files if f.endswith('.txt')]
 
@@ -15,15 +15,15 @@ filePath = os.path.join(folderPath, fileName)
 fileCreate = ""
 
 if os.path.exists(filePath):
+    fileCreate = "no"
     file = open(filePath, "a")
+    tasks = input("Please enter your tasks here: \n")
+    file.write(tasks)
+    print("Tasks added to the file.")
 else:
-    open(fileName, "a").close
+  fileCreate = input("The list could not be located. Would you like to create one? (yes/no) ").lower()
 
-if fileCreate == "YES":
-    file.write(input("Please enter your tasks here: "))
-    file.close()
-else:
-    fileCreate = input("The list could not be located. Would you like to create one? (yes/no) ").lower()
+file.close()
 
 if fileCreate == "yes":
     print("Please enter your tasks: ")
@@ -32,3 +32,10 @@ elif fileCreate == "no":
     print("Okay, try to search for your file again")
 else:
     print("Unable to understand prompt! ")
+
+if fileCreate == "yes":
+    tasks = input()
+    file.write(tasks)
+    print("Tasks added to the file.")
+
+file.close()
