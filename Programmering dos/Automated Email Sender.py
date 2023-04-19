@@ -1,7 +1,7 @@
 import smtplib
 import datetime
 
-#Mailserver samt portid
+#Mailserver samt port-ID
 smtp_mailInfo = smtplib.SMTP('smtp.gmail.com', 587)
 
 #Krypterar mailet
@@ -19,4 +19,8 @@ subject = input("Enter the email subject: ")
 mainText = input("Enter the main text: ")
 
 message = f"Subject: {subject}\n\n{mainText}"
-smtp_mailInfo.sendmail(recipient, subject, mainText)
+#Skickar mailet och testar om det går
+try:
+    smtp_mailInfo.sendmail(recipient, subject, mainText)
+except smtplib.SMTPException:
+    pass
