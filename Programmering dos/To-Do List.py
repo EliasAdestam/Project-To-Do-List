@@ -1,5 +1,5 @@
 import os
-
+import shelve
 def getTxtFilesInFolder(folderPath):                   #Visar .txt filerna i valda directory
     files = os.listdir(folderPath)
     return [f for f in files if f.endswith('.txt') and f != "directoryPath.txt"]
@@ -35,20 +35,38 @@ def removeTask(filePath, taskIndex):              #Tar bort to-do grejer i själ
 
     print(f"Task '{task.strip()}' removed from the file.")
 
+def directoryConfig():                  #Kommer ihåg vald katalog av användaren
+    db = shelve.open("ToDoListConfig")
+    if not db:                          #Kollar om det finns en lagrad värde
+        directoryPath = input("Enter the directory where you want your lists to be saved here: ")
+        db["directoryPath"] = directoryPath
+    else:
+        directoryPath = db['directoryPath']
+        print(f"The current directory path is {directoryPath}")
+
+    changeDirectory = input("Would you like to change the directory path? (yes/no): ")  #Om det finns ett lagrat värde kollar den med användaren om den vill byta
+    if changeDirectory.lower() == 'yes' or changeDirectory.lower() == 'y':
+        directoryPath = input("Please enter a directory where you want to have your lists saved: ")
+        db['directoryPath'] = directoryPath
+
+    db.close()
+
+
 def main():
-    folderPath = input("Enter the directory where you want your lists to be saved here: ")  #Här får användaren välja var filerna ska sparas
-    with open("directoryPath.txt", "w") as f:
-        f.write(folderPath)
+    directoryConfig()                        #Här får användaren välja var filerna ska sparas
+    db = shelve.open("ToDoListConfig")
+    folderPath = db["directoryPath"]
+    db.close()
 
-    while not os.path.exists(folderPath):                                                 #En while-loop som ser till att programmet inte kraschar när katalogen inte hittas
-      folderPath = input("The directory could not be found. Please enter again: ")
+    while not os.path.isdir(folderPath):                                                 #En while-loop som ser till att programmet inte kraschar när katalogen inte hittas
+        folderPath = input("The directory could not be found. Please enter again: ")
 
-    txt_files = getTxtFilesInFolder(folderPath)
+    txtFiles = getTxtFilesInFolder(folderPath)
 
     print("Welcome to your to-do list! Select an existing to-do list below or create a new one:")   #Här visar den existerande filer
 
-    for txt_file in txt_files:
-        print(txt_file[:-4])
+    for txtFile in txtFiles:
+        print(txtFile[:-4])
 
     fileName = input("Please enter the name of the file you want to edit or create: ")   #Här får användaren välja vilken fil den vill öppna eller skapa
     filePath = getFilePath(folderPath, fileName)
