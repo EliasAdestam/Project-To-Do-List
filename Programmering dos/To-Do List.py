@@ -51,7 +51,6 @@ def directoryConfig():                  #Kommer ihåg vald katalog av användare
 
     db.close()
 
-
 def main():
     directoryConfig()                        #Här får användaren välja var filerna ska sparas
     db = shelve.open("ToDoListConfig")
@@ -76,20 +75,20 @@ def main():
         print("Could not locate or create file. Exiting.")
         return
 
-    tasks = readTasksFromFile(filePath)        #Här visar den filerna i enumerate-läge vilket innebär att den inte kan ändras för tillfället
+    tasks = readTasksFromFile(filePath)        #Här visar den filerna i enumerate-läge vilket innebär att den inte kan ändras
     print("Your current to-do list:")
     for i, task in enumerate(tasks):
         print(f"{i+1}. {task.strip()}")
 
-    while True:                 #Här är en while-loop som körs när filerna väl är öppna. Då kan man lägga till, ta bort och gå ur programmet.
-        command = input("Enter 'add' to add a task, 'remove' to remove a task, or 'exit' to exit: ")
-        if command.lower() == "exit":
+    while True:                 #Här är en while-loop som körs när filerna väl är öppna. Då kan man lägga till, ta bort, byta lista och gå ur programmet.
+        command = input("Enter 'add' to add a task, 'remove' to remove a task,'new' to choose another list or 'exit' to exit: ")
+        if command.lower() == "exit": #Här kan användaren gå ut ur programmet
             break
-        elif command.lower() == "add":
+        elif command.lower() == "add": #Här kan användaren lägga till saker till listan
             task = input("Please enter your task: ")
             file.write(task + "\n")
             print("Task added to the file.")
-        elif command.lower() == "remove":
+        elif command.lower() == "remove": #Här kan användaren ta bort saker från listan
             tasks = readTasksFromFile(filePath)
             print("Your current to-do list:")
             for i, task in enumerate(tasks):
@@ -100,6 +99,23 @@ def main():
 
             taskIndex = int(input(f"Please enter the index of the task you want to remove (1-{len(tasks)}): "))
             removeTask(filePath, taskIndex)
+        elif command.lower() == "new":  #Här körs en kod som gör det möjligt för användaren att välja en ny lista
+            txtFiles = getTxtFilesInFolder(folderPath)
+            print("Existing to-do lists:")
+            for txtFile in txtFiles:
+                print(txtFile[:-4])
+            newFileName = input("Please enter the name of the new file you want to edit or create: ")
+            newFilePath = getFilePath(folderPath, newFileName)
+            newFile = createOrOpenFile(newFilePath, createFile=True)
+            if newFile is None:
+                print("Could not locate or create file. Exiting.")
+                return
+            tasks = readTasksFromFile(newFilePath)
+            print(f"Your current to-do list ({newFileName}):")
+            for i, task in enumerate(tasks):
+                print(f"{i + 1}. {task.strip()}")
+            filePath = newFilePath
+            file = newFile
         else:
             print("Invalid command.")
 
